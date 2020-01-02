@@ -3,8 +3,7 @@
 from flask import (request, redirect, url_for, render_template, send_file,
                    current_app)
 from requests.exceptions import HTTPError
-from solarforecastarbiter.reports.main import report_to_html_body
-from solarforecastarbiter.reports.template import full_html
+from solarforecastarbiter.reports.template import get_template_and_kwargs, render_html
 from sfa_dash.api_interface import (observations, forecasts, sites, reports,
                                     aggregates)
 
@@ -127,8 +126,11 @@ class ReportView(BaseView):
 
     def template_args(self):
         report_template = report_to_html_body(self.metadata)
-        return {'report': report_template,
-                'includes_bokeh': True}
+        report_template, kwargs = get_template_and_kwargs(
+            self.metadata, request.url_root.rstrip('/'), True, True)
+        kwargs.update({'report': report_template,
+                'includes_bokeh': True})
+        return kwargs
 
     def get(self, uuid):
         try:
@@ -152,9 +154,9 @@ class DownloadReportView(BaseView):
         # render to right format
         if self.format_ == 'html':
             fname = metadata.name.replace(' ', '_')
-            body = report_to_html_body(metadata)
-            # should make a nice template for standalone reports
-            bytes_out = full_html(body).encode('utf-8')
+            bytes_out = render_html(metadata, request.url_root.rstrip('/'),
+                                    with_timeseries=True, body_only=False
+                                    ).encode('utf-8')
         else:
             raise ValueError(
                 'Only html report downloads is currently supported')
