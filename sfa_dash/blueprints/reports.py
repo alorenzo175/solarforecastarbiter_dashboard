@@ -123,12 +123,10 @@ class ReportView(BaseView):
     template = 'data/report.html'
 
     def should_include_timeseries(self):
-        report_period = (self.metadata.end - self.metadata.start)
-        total_data_points = 0
+        total_points = 0
         for fxobs in self.metadata.raw_report.processed_forecasts_observations:
-            fxobs_data_points = report_period / fxobs.interval_length * 2
-            total_data_points = total_data_points + fxobs_data_points
-        return total_data_points < current_app.config['REPORT_DATA_LIMIT']
+            total_points = total_points + (fxobs.valid_point_count * 2)
+        return total_points < current_app.config['REPORT_DATA_LIMIT']
 
     def template_args(self):
         include_timeseries = self.should_include_timeseries()
