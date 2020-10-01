@@ -47,3 +47,9 @@ class ProdConfig(BaseConfig):
     SFA_API_URL = 'https://api.solarforecastarbiter.org'
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+
+class AwsTestConfig(BaseConfig):
+    SFA_API_URL = 'https://aws-api.solarforecastarbiter.org'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

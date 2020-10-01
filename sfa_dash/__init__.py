@@ -126,6 +126,8 @@ def create_app_with_metrics(config='sfa_dash.config.ProdConfig'):  # pragma: no 
 def __getattr__(name):  # pragma: no cover
     if name == 'app':
         return create_app_with_metrics('sfa_dash.config.ProdConfig')
+    elif name == 'aws_app':
+        return create_app_with_metrics('sfa_dash.config.AwsTestConfig')
     elif name == 'dev_app':
         return create_app_with_metrics('sfa_dash.config.DevConfig')
     elif name == 'local_app':
